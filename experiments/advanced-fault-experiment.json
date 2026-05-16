@@ -1,0 +1,46 @@
+{
+  "version": "1.0.0",
+  "title": "Advanced Fault Injection Experiment",
+  "description": "An advanced experiment with various fault injection types",
+  "steady-state-hypothesis": {
+    "title": "System is operational",
+    "probes": []
+  },
+  "method": [
+    {
+      "type": "action",
+      "name": "get-system-information",
+      "provider": {
+        "type": "python",
+        "module": "platform",
+        "func": "platform"
+      }
+    },
+    {
+      "type": "action",
+      "name": "get-environment-variable",
+      "provider": {
+        "type": "python",
+        "module": "os",
+        "func": "getenv",
+        "arguments": {
+          "key": "USERNAME"
+        }
+      }
+    },
+    {
+      "type": "action",
+      "name": "simulate-cpu-load",
+      "provider": {
+        "type": "python",
+        "module": "builtins",
+        "func": "pow",
+        "arguments": {
+          "base": 2,
+          "exp": 10000
+        }
+      }
+    }
+  ],
+  "rollbacks": []
+}

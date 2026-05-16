@@ -1,0 +1,391 @@
+<html><head><meta charset=utf-8><title>硬盘故障RCA报告</title><style>body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:960px;margin:auto;padding:20px;line-height:1.7;color:#333}table{border-collapse:collapse;width:100%;margin:12px 0}td,th{border:1px solid #ddd;padding:8px 12px}th{background:#f6f8fa}h1{color:#c00;border-bottom:3px solid #c00;padding-bottom:8px}h2{color:#333;border-bottom:2px solid #eee;padding-bottom:4px;margin-top:28px}code{background:#f0f0f0;padding:2px 6px;border-radius:3px}pre{background:#f8f8f8;padding:14px;border-radius:6px;overflow-x:auto;border:1px solid #eee}</style></head><body><h1>🔴 硬盘故障根因分析（RCA）报告</h1>
+<blockquote>
+<p><strong>报告编号</strong>：RCA-20260305-FINAL
+<strong>故障级别</strong>：P1 / Critical
+<strong>报告时间</strong>：2026-05-06
+<strong>分析模式</strong>：离线日志分析
+<strong>分析Agent</strong>：Baize（白泽）分析与报告 Agent
+<strong>数据来源</strong>：<code>G:\chaostoolkit\sample_logs</code> 下的多源日志</p>
+</blockquote>
+<hr />
+<h2>一、故障概览</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>故障标题</td>
+<td><strong>物理硬盘介质损坏</strong>导致 I/O 错误与 XFS 文件系统强制关机</td>
+</tr>
+<tr>
+<td>影响范围</td>
+<td><code>/dev/sdi</code> 上的 XFS 文件系统，SCSI [0:0:8:0]，SAS Phy 7，Slot 8</td>
+</tr>
+<tr>
+<td>故障时段</td>
+<td>2026-03-05 00:26:22 ~ 14:12:20（持续约 14 小时）</td>
+</tr>
+<tr>
+<td>根本原因</td>
+<td>硬盘物理扇区损坏（坏道）→ SMART 阈值超限 → iBMC 通信失败 → I/O 错误 → XFS 关机</td>
+</tr>
+<tr>
+<td>是否恢复</td>
+<td>❌ 未恢复（硬盘未更换，文件系统未修复）</td>
+</tr>
+<tr>
+<td>根因置信度</td>
+<td>🟢 <strong>高置信度</strong>（三层证据链完整，多源日志完全一致）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>二、执行摘要</h2>
+<p>本次分析针对 2026-03-05 14:31 前最近一次硬盘故障进行根因定位。通过综合分析 iBMC 硬件日志、SMART 磁盘健康信息和操作系统内核日志，确认存在 <strong>硬盘物理介质损坏</strong>：</p>
+<ol>
+<li><strong>故障设备</strong>：<code>/dev/sdi</code>（WDC WUH721414AL 14TB 硬盘）</li>
+<li><strong>物理位置</strong>：SAS Expander Phy 7 端口，SCSI 地址 [0:0:8:0]，Slot 8</li>
+<li><strong>故障类型</strong>：硬盘物理扇区损坏（坏道）导致的不可恢复读/写错误</li>
+<li><strong>影响范围</strong>：XFS 文件系统元数据损坏，文件系统被强制关闭</li>
+<li><strong>根因</strong>：硬盘物理介质损坏，SMART 多项指标严重超标</li>
+</ol>
+<hr />
+<h2>三、故障时间线重建（T0 确定）</h2>
+<p><strong>T0 故障零点</strong>：<code>2026-03-05 00:26:22</code>（最早可观测异常）</p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>事件</th>
+<th>来源</th>
+<th>严重性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>00:26:22</strong></td>
+<td>SMART: 240 pending sectors, Reallocated 30→31</td>
+<td>messages.log</td>
+<td>⚠️ 警告</td>
+</tr>
+<tr>
+<td>02:12:08</td>
+<td>iBMC: Drive 8 通信失败</td>
+<td>sel_log.txt</td>
+<td>🔴 严重</td>
+</tr>
+<tr>
+<td>02:15:39</td>
+<td>iBMC: 电源控制失败（HDM_SetBPCtl 0 failed）</td>
+<td>sel_log.txt</td>
+<td>🔴 严重</td>
+</tr>
+<tr>
+<td>02:56:55</td>
+<td>iBMC: 重试电源控制仍失败（HDM_SetBPCtl 1 failed）</td>
+<td>sel_log.txt</td>
+<td>🔴 严重</td>
+</tr>
+<tr>
+<td>03:10:00</td>
+<td>iBMC: Drive 8 Fault — 通信丢失</td>
+<td>sel_log.txt</td>
+<td>🔴 严重</td>
+</tr>
+<tr>
+<td>14:11:36</td>
+<td>内核: I/O error dev sdi（多个 sector）</td>
+<td>messages.log</td>
+<td>💥 致命</td>
+</tr>
+<tr>
+<td>14:11:40</td>
+<td>SCSI: medium access failure</td>
+<td>messages.log</td>
+<td>🔴 严重</td>
+</tr>
+<tr>
+<td>14:12:04</td>
+<td>XFS: 元数据 I/O 错误</td>
+<td>messages.log</td>
+<td>🔴 严重</td>
+</tr>
+<tr>
+<td>14:12:20</td>
+<td>XFS: force_shutdown — 文件系统关闭</td>
+<td>messages.log</td>
+<td>🛑 系统保护</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>四、证据链分析</h2>
+<h3>4.1 硬件层证据（iBMC 日志）</h3>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>事件</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>02:12:08</td>
+<td>Get HDD Present Value Failed !!!</td>
+<td>硬盘检测失败，无法读取硬盘状态</td>
+</tr>
+<tr>
+<td>02:15:39</td>
+<td>HDM_SetBPCtl 0 failed!!</td>
+<td>硬盘电源控制失败</td>
+</tr>
+<tr>
+<td>02:56:55</td>
+<td>HDM_SetBPCtl 1 failed!!</td>
+<td>重试仍然失败</td>
+</tr>
+<tr>
+<td>03:10:00</td>
+<td>Drive 8 Fault detected</td>
+<td>确认硬盘通信丢失</td>
+</tr>
+<tr>
+<td>14:30:00</td>
+<td>Drive 8 removed from storage pool</td>
+<td>硬盘被移出存储池</td>
+</tr>
+</tbody>
+</table>
+<p><strong>结论</strong>：硬件层确认 Drive 8（Slot 8）持续通信失败，硬盘固件已无法正常响应。</p>
+<h3>4.2 磁盘健康证据（SMART 信息）</h3>
+<table>
+<thead>
+<tr>
+<th>SMART 属性</th>
+<th>原始值</th>
+<th>阈值</th>
+<th>状态</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Overall Health</td>
+<td>FAILED</td>
+<td>—</td>
+<td>❌ 致命</td>
+<td>磁盘自检失败</td>
+</tr>
+<tr>
+<td>Reallocated_Sector_Ct</td>
+<td>31</td>
+<td>1</td>
+<td>❌ 严重</td>
+<td>已重映射 31 个扇区（超标 31 倍）</td>
+</tr>
+<tr>
+<td>Current_Pending_Sector</td>
+<td>240</td>
+<td>—</td>
+<td>❌ 严重</td>
+<td>240 个扇区无法读取</td>
+</tr>
+<tr>
+<td>Offline_Uncorrectable</td>
+<td>240</td>
+<td>—</td>
+<td>❌ 严重</td>
+<td>240 个扇区数据已丢失</td>
+</tr>
+<tr>
+<td>SMART Self-test</td>
+<td>read failure</td>
+<td>—</td>
+<td>❌ 失败</td>
+<td>短/长自检均报告读取失败</td>
+</tr>
+</tbody>
+</table>
+<p><strong>结论</strong>：硬盘存在大量坏道，重映射资源已耗尽，不可纠正错误已达 240 个扇区。</p>
+<h3>4.3 操作系统层证据（内核日志）</h3>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>事件</th>
+<th>影响</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>00:26:22 ~ 14:00</td>
+<td>smartd 每小时报告 240 pending sectors</td>
+<td>持续 14 小时的早期预警</td>
+</tr>
+<tr>
+<td>14:11:36</td>
+<td>blk_update_request: I/O error</td>
+<td>块设备 I/O 请求失败</td>
+</tr>
+<tr>
+<td>14:11:40</td>
+<td>sd 0:0:8:0: medium access failure</td>
+<td>SCSI 介质访问失败</td>
+</tr>
+<tr>
+<td>14:12:04</td>
+<td>XFS metadata I/O error</td>
+<td>XFS 文件系统元数据损坏</td>
+</tr>
+<tr>
+<td>14:12:20</td>
+<td>XFS force_shutdown</td>
+<td>文件系统强制关闭</td>
+</tr>
+</tbody>
+</table>
+<p><strong>结论</strong>：硬盘物理故障已传递到文件系统层，XFS 文件系统因元数据损坏而触发自我保护机制。</p>
+<h3>4.4 设备映射信息</h3>
+<table>
+<thead>
+<tr>
+<th>逻辑设备</th>
+<th>物理位置</th>
+<th>型号</th>
+<th>容量</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>/dev/sdi</td>
+<td>SAS Phy 7, SCSI [0:0:8:0], Slot 8</td>
+<td>WDC WUH721414AL</td>
+<td>14TB</td>
+<td>🔴 FAULT</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>五、根因推断</h2>
+<h3>根本原因：硬盘物理介质损坏</h3>
+<p>基于以下证据链，确定根本原因为<strong>硬盘物理扇区损坏（坏道）</strong>：</p>
+<ol>
+<li><strong>时序证据</strong>：SMART 告警（00:26:22）早于硬件通信失败（02:12:08），表明介质损坏先于固件故障</li>
+<li><strong>SMART 指标</strong>：Reallocated_Sector_Ct=31 和 Current_Pending_Sector=240 明确指示硬盘存在大量坏道</li>
+<li><strong>错误演进模式</strong>：不可读扇区告警 → 硬件通信失败 → I/O 错误 → XFS 文件系统关机</li>
+<li><strong>排除其他原因</strong>：</li>
+<li>RAID 状态正常，排除控制器问题</li>
+<li>无 SAS 链路错误，排除线缆/HBA 问题</li>
+<li>仅 sdi 出现故障，排除供电/背板问题</li>
+</ol>
+<h3>故障传导链</h3>
+<pre><code class="language-text">物理扇区损坏（坏道）
+  ↓
+SMART 检测到 240 不可读扇区（00:26）
+  ↓
+硬盘重映射资源耗尽（Reallocated=31）
+  ↓
+硬盘固件异常，通信失败（02:12）
+  ↓
+iBMC 确认 Drive 8 Fault（03:10）
+  ↓
+内核 I/O 请求全部失败（14:11）
+  ↓
+XFS 元数据读取失败（14:12）
+  ↓
+XFS 触发 force_shutdown，文件系统不可用（14:12）
+</code></pre>
+<hr />
+<h2>六、证据校验表</h2>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>标准</th>
+<th>结果</th>
+<th>说明</th>
+<th>证据来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E1 时序连续性</td>
+<td>硬件告警早于或同步系统报错</td>
+<td>✅ 通过</td>
+<td>iBMC 02:12 &lt; 内核 14:11</td>
+<td>sel_log.txt:11 vs messages.log:34</td>
+</tr>
+<tr>
+<td>E2 物理同一性</td>
+<td>盘符与物理槽位对应</td>
+<td>✅ 通过</td>
+<td>/dev/sdi → SCSI[0:0:8:0] → Phy7 → Slot8</td>
+<td>sasraidlog.txt:25</td>
+</tr>
+<tr>
+<td>E3 现象排他性</td>
+<td>排除 RAID/巡检干扰</td>
+<td>✅ 通过</td>
+<td>同背板 7 块磁盘均正常</td>
+<td>sasraidlog.txt:15-22</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>七、影响评估</h2>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>评估</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据完整性</td>
+<td>🔴 高风险</td>
+<td>XFS 元数据损坏，240 个扇区数据已丢失</td>
+</tr>
+<tr>
+<td>系统可用性</td>
+<td>🟡 中风险</td>
+<td>单盘故障，可能影响依赖该文件系统的服务</td>
+</tr>
+<tr>
+<td>业务连续性</td>
+<td>🟡 中风险</td>
+<td>需要更换硬盘并恢复数据</td>
+</tr>
+<tr>
+<td>扩展风险</td>
+<td>🟢 低风险</td>
+<td>未发现其他硬盘类似问题</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>八、行动建议</h2>
+<h3>紧急措施（立即执行）</h3>
+<ol>
+<li>隔离故障硬盘：<code>echo offline &gt; /sys/block/sdi/device/state</code></li>
+<li>卸载文件系统：<code>umount /dev/sdi</code></li>
+<li>使用 <code>ddrescue</code> 尝试从故障盘中抢救可读数据</li>
+</ol>
+<h3>修复措施（24 小时内）</h3>
+<ol>
+<li><strong>硬件更换</strong>：根据物理位置 Slot 8 定位并更换为同型号 WDC WUH721414AL 14TB</li>
+<li><strong>数据恢复</strong>：从最近备份恢复数据，运行 <code>xfs_repair</code> 修复文件系统</li>
+</ol>
+<h3>预防措施（长期）</h3>
+<ol>
+<li><strong>监控强化</strong>：SMART Reallocated_Sector_Ct &gt; 1 即触发告警</li>
+<li><strong>定期巡检</strong>：每月执行 SMART Extended Self-test</li>
+<li><strong>备份策略</strong>：重要数据实施多副本存储</li>
+</ol></body></html>

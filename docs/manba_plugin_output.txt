@@ -1,0 +1,54 @@
+﻿=== RUN   TestFaultInjection_Plugin_InvalidJSSyntax
+    fault_injection_test.go:34: [P1.1] 鏃犳晥JS璇硶 -> 閿欒: (anonymous): Line 1:54 Unexpected end of input (and 3 more errors)
+--- PASS: TestFaultInjection_Plugin_InvalidJSSyntax (0.00s)
+=== RUN   TestFaultInjection_Plugin_ConstructorNotFunction
+    fault_injection_test.go:53: [P1.2] 鏋勯€犲嚱鏁伴潪鍑芥暟 -> 閿欒: plugin constructor must be a function
+--- PASS: TestFaultInjection_Plugin_ConstructorNotFunction (0.00s)
+=== RUN   TestFaultInjection_Plugin_ConstructorReturnNotObject
+    fault_injection_test.go:72: [P1.3] 鏋勯€犲嚱鏁拌繑鍥為潪瀵硅薄 -> 閿欒: plugin constructor must be return an object
+--- PASS: TestFaultInjection_Plugin_ConstructorReturnNotObject (0.00s)
+=== RUN   TestFaultInjection_Plugin_PreNotFunction
+    fault_injection_test.go:97: [P1.4] pre闈炲嚱鏁?-> 閿欒: pre must function
+--- PASS: TestFaultInjection_Plugin_PreNotFunction (0.00s)
+=== RUN   TestFaultInjection_Plugin_PostNotFunction
+    fault_injection_test.go:121: [P1.5] post闈炲嚱鏁?-> 閿欒: post must function
+--- PASS: TestFaultInjection_Plugin_PostNotFunction (0.00s)
+=== RUN   TestFaultInjection_Plugin_PreReturnNotObject
+    fault_injection_test.go:174: [P2.1] pre杩斿洖闈炲璞?-> 閿欒: unexpect js plugin returned string return value (棰勬湡)
+--- PASS: TestFaultInjection_Plugin_PreReturnNotObject (0.00s)
+=== RUN   TestFaultInjection_Plugin_PreReturnNoCode
+    fault_injection_test.go:203: [P2.2] pre杩斿洖绌哄璞?-> code=500, err=js plugin result code must be number
+--- PASS: TestFaultInjection_Plugin_PreReturnNoCode (0.00s)
+=== RUN   TestFaultInjection_Plugin_PreReturnCodeNotNumber
+    fault_injection_test.go:232: [P2.3] pre杩斿洖string code -> 閿欒: js plugin result code must be number
+--- PASS: TestFaultInjection_Plugin_PreReturnCodeNotNumber (0.00s)
+=== RUN   TestFaultInjection_Plugin_PreReturnErrorNotString
+    fault_injection_test.go:262: [P2.4] pre杩斿洖number error -> 閿欒: js plugin result error must be string
+--- PASS: TestFaultInjection_Plugin_PreReturnErrorNotString (0.00s)
+=== RUN   TestFaultInjection_Plugin_PreThrowsException
+2026/05/07 00:00:41.866371 [error] plugin 1/throw-ex:1 plugin pre func failed with Error: intentional crash
+    fault_injection_test.go:294: [P2.5] pre鎶涘紓甯?-> 閿欒: Error: intentional crash
+--- PASS: TestFaultInjection_Plugin_PreThrowsException (0.03s)
+=== RUN   TestFaultInjection_Plugin_PostReturnNotObject
+    fault_injection_test.go:323: [P2.6] post杩斿洖undefined -> 閿欒: unexpect js plugin returned undefined
+--- PASS: TestFaultInjection_Plugin_PostReturnNotObject (0.00s)
+=== RUN   TestFaultInjection_Plugin_PreNilCtx
+    fault_injection_test.go:363: [P3.1] Pre(nil) -> err=<nil> (鏃爌anic)
+--- PASS: TestFaultInjection_Plugin_PreNilCtx (0.00s)
+=== RUN   TestFaultInjection_Plugin_EmptyContent
+    fault_injection_test.go:387: [P4.1] 绌篊ontent -> 閿欒: plugin constructor must be a function
+--- PASS: TestFaultInjection_Plugin_EmptyContent (0.00s)
+=== RUN   TestFaultInjection_Plugin_RequireUnknownModule
+    fault_injection_test.go:421: [P5.1] require鏈煡妯″潡 -> 鎴愬姛鍒涘缓(Require浠呭綋琚皟鐢ㄦ椂鎵嶄細杩斿洖nil)
+--- PASS: TestFaultInjection_Plugin_RequireUnknownModule (0.00s)
+=== RUN   TestFaultInjection_Plugin_EmptyCfg
+    fault_injection_test.go:447: [P5.2] 绌篶fg -> 閿欒: TypeError: 'Parse' is not a function
+--- PASS: TestFaultInjection_Plugin_EmptyCfg (0.00s)
+=== RUN   TestFaultInjection_Plugin_HighFrequencyCall
+    fault_injection_test.go:489: [P6.1] 鍚屼竴鎻掍欢瀹炰緥鎵ц1000娆re -> 鍏ㄩ儴鎴愬姛
+--- PASS: TestFaultInjection_Plugin_HighFrequencyCall (0.00s)
+=== RUN   TestFaultInjection_Plugin_HighFreqSerial
+    fault_injection_test.go:525: [P7.1] 500娆¤繛缁覆琛宲re鎵ц -> 瀹屾垚
+--- PASS: TestFaultInjection_Plugin_HighFreqSerial (0.00s)
+PASS
+ok  	github.com/fagongzi/gateway/pkg/plugin	0.233s

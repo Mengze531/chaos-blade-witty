@@ -1,0 +1,39 @@
+{
+  "version": "1.0.0",
+  "title": "Comprehensive Fault Injection Experiment",
+  "description": "A comprehensive experiment demonstrating various fault injection types",
+  "steady-state-hypothesis": {
+    "title": "System is operational",
+    "probes": []
+  },
+  "method": [
+    {
+      "type": "action",
+      "name": "get-system-information",
+      "provider": {
+        "type": "python",
+        "module": "platform",
+        "func": "platform"
+      }
+    },
+    {
+      "type": "action",
+      "name": "get-current-process-id",
+      "provider": {
+        "type": "python",
+        "module": "os",
+        "func": "getpid"
+      }
+    },
+    {
+      "type": "action",
+      "name": "get-current-directory",
+      "provider": {
+        "type": "python",
+        "module": "os",
+        "func": "getcwd"
+      }
+    }
+  ],
+  "rollbacks": []
+}

@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "title": "A sample experiment",
+  "description": "This is a simple experiment to demonstrate Chaos Toolkit",
+  "steady-state-hypothesis": {
+    "title": "The system is available",
+    "probes": []
+  },
+  "method": [
+    {
+      "type": "action",
+      "name": "get-current-directory",
+      "provider": {
+        "type": "python",
+        "module": "os",
+        "func": "getcwd"
+      }
+    }
+  ],
+  "rollbacks": []
+}

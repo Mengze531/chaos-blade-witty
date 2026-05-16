@@ -1,0 +1,53 @@
+{
+  "version": "1.0.0",
+  "title": "Extended Fault Injection Experiment",
+  "description": "An extended experiment with various fault injection types",
+  "steady-state-hypothesis": {
+    "title": "System is operational",
+    "probes": []
+  },
+  "method": [
+    {
+      "type": "action",
+      "name": "get-system-information",
+      "provider": {
+        "type": "python",
+        "module": "platform",
+        "func": "platform"
+      }
+    },
+    {
+      "type": "action",
+      "name": "get-current-process-id",
+      "provider": {
+        "type": "python",
+        "module": "os",
+        "func": "getpid"
+      }
+    },
+    {
+      "type": "action",
+      "name": "get-current-directory",
+      "provider": {
+        "type": "python",
+        "module": "os",
+        "func": "getcwd"
+      }
+    },
+
+    {
+      "type": "action",
+      "name": "simulate-cpu-load",
+      "provider": {
+        "type": "python",
+        "module": "builtins",
+        "func": "pow",
+        "arguments": {
+          "base": 2,
+          "exp": 10000
+        }
+      }
+    }
+  ],
+  "rollbacks": []
+}

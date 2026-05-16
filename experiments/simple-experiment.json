@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "title": "Simple Chaos Experiment",
+  "description": "A minimal chaos experiment example",
+  "steady-state-hypothesis": {
+    "title": "System is operational",
+    "probes": []
+  },
+  "method": [
+    {
+      "type": "action",
+      "name": "simulate-delay",
+      "provider": {
+        "type": "python",
+        "module": "time",
+        "func": "sleep",
+        "arguments": {
+          "object": 1
+        }
+      }
+    }
+  ],
+  "rollbacks": []
+}

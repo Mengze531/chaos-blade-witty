@@ -1,0 +1,17 @@
+﻿=== RUN   TestFaultInjection_Filter_GetNonExistentAttr
+    fault_injection_test.go:52: [FT1.1] 鑾峰彇涓嶅瓨鍦╝ttr -> nil
+--- PASS: TestFaultInjection_Filter_GetNonExistentAttr (0.00s)
+=== RUN   TestFaultInjection_Filter_ConcurrentAttr
+    fault_injection_test.go:82: [FT1.2] 20涓猤oroutine骞跺彂璇诲啓Attr瀹屾垚
+--- PASS: TestFaultInjection_Filter_ConcurrentAttr (0.00s)
+=== RUN   TestFaultInjection_Filter_StringValueNonExistent
+    fault_injection_test.go:95: [FT2.1] 鏁呴殰娉ㄥ叆: StringValue璁块棶涓嶅瓨鍦╝ttr -> panic: interface conversion: interface {} is nil, not string (棰勬湡type assertion澶辫触)
+--- PASS: TestFaultInjection_Filter_StringValueNonExistent (0.00s)
+=== RUN   TestFaultInjection_Filter_CachedValueNilResponse
+    fault_injection_test.go:114: [FT3.1] 鏁呴殰娉ㄥ叆: NewCachedValue(nil) -> panic: runtime error: invalid memory address or nil pointer dereference
+--- PASS: TestFaultInjection_Filter_CachedValueNilResponse (0.00s)
+=== RUN   TestFaultInjection_Filter_ReadCachedValueNil
+    fault_injection_test.go:124: [FT3.2] 鏁呴殰娉ㄥ叆: ReadCachedValueTo(nil, _) -> panic: runtime error: invalid memory address or nil pointer dereference
+--- PASS: TestFaultInjection_Filter_ReadCachedValueNil (0.00s)
+PASS
+ok  	github.com/fagongzi/gateway/pkg/filter	0.173s

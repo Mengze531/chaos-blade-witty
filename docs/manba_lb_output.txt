@@ -1,0 +1,80 @@
+﻿=== RUN   TestFaultInjection_LB_EmptyServers_Rand
+    fault_injection_test.go:25: [L1.1 Rand] 绌哄垪琛≧andom LB -> id=0 (棰勬湡: 0)
+    fault_injection_test.go:31: [L1.1 Rand] 绌哄垏鐗嘡andom LB -> id=0 (棰勬湡: 0)
+--- PASS: TestFaultInjection_LB_EmptyServers_Rand (0.00s)
+=== RUN   TestFaultInjection_LB_EmptyServers_RoundRobin
+    fault_injection_test.go:42: [L1.2 RR] 绌哄垪琛≧oundRobin -> id=0 (棰勬湡: 0)
+    fault_injection_test.go:45: [L1.2 RR] 绌哄垏鐗嘡oundRobin -> id=0 (棰勬湡: 0)
+--- PASS: TestFaultInjection_LB_EmptyServers_RoundRobin (0.00s)
+=== RUN   TestFaultInjection_LB_EmptyServers_WeightRobin
+    fault_injection_test.go:56: [L1.3 WR] 绌哄垪琛╓eightRobin -> id=0 (棰勬湡: 0)
+    fault_injection_test.go:59: [L1.3 WR] 绌哄垏鐗嘩eightRobin -> id=0 (棰勬湡: 0)
+--- PASS: TestFaultInjection_LB_EmptyServers_WeightRobin (0.00s)
+=== RUN   TestFaultInjection_LB_EmptyServers_HashIP
+    fault_injection_test.go:70: [L1.4 Hash] 绌哄垪琛℉ashIP -> id=0 (棰勬湡: 0)
+    fault_injection_test.go:73: [L1.4 Hash] 绌哄垏鐗嘓ashIP -> id=0 (棰勬湡: 0)
+--- PASS: TestFaultInjection_LB_EmptyServers_HashIP (0.00s)
+=== RUN   TestFaultInjection_LB_NilCtx_Rand
+    fault_injection_test.go:87: [L2.1 Rand] nil ctx Random LB -> id=19 (涓嶅簲panic)
+--- PASS: TestFaultInjection_LB_NilCtx_Rand (0.00s)
+=== RUN   TestFaultInjection_LB_NilCtx_RoundRobin
+    fault_injection_test.go:96: [L2.2 RR] nil ctx RoundRobin -> id=2 (涓嶅簲panic)
+--- PASS: TestFaultInjection_LB_NilCtx_RoundRobin (0.00s)
+=== RUN   TestFaultInjection_LB_NilCtx_WeightRobin
+    fault_injection_test.go:105: [L2.3 WR] nil ctx WeightRobin -> id=5 (涓嶅簲panic)
+--- PASS: TestFaultInjection_LB_NilCtx_WeightRobin (0.00s)
+=== RUN   TestFaultInjection_LB_NilCtx_HashIP
+    fault_injection_test.go:115: [L2.4 Hash] nil ctx HashIP -> panic: runtime error: invalid memory address or nil pointer dereference
+--- PASS: TestFaultInjection_LB_NilCtx_HashIP (0.00s)
+=== RUN   TestFaultInjection_LB_SingleServer
+    fault_injection_test.go:157: [L3] 鍗曟湇鍔″櫒鎵€鏈塋B -> 閮借繑鍥?2
+--- PASS: TestFaultInjection_LB_SingleServer (0.00s)
+=== RUN   TestFaultInjection_LB_ZeroWeight
+    fault_injection_test.go:188: [L4.1] 鏁呴殰娉ㄥ叆: 鏉冮噸涓?鐨勬湇鍔″櫒浠庢湭琚€変腑(姝ｇ‘)
+--- PASS: TestFaultInjection_LB_ZeroWeight (0.00s)
+=== RUN   TestFaultInjection_LB_LargeWeight
+    fault_injection_test.go:210: [L4.3] 瓒呭ぇ鏉冮噸杩唬0 -> id=1
+    fault_injection_test.go:210: [L4.3] 瓒呭ぇ鏉冮噸杩唬1 -> id=1
+    fault_injection_test.go:210: [L4.3] 瓒呭ぇ鏉冮噸杩唬2 -> id=1
+    fault_injection_test.go:210: [L4.3] 瓒呭ぇ鏉冮噸杩唬3 -> id=1
+    fault_injection_test.go:210: [L4.3] 瓒呭ぇ鏉冮噸杩唬4 -> id=1
+    fault_injection_test.go:210: [L4.3] 瓒呭ぇ鏉冮噸杩唬5 -> id=1
+    fault_injection_test.go:210: [L4.3] 瓒呭ぇ鏉冮噸杩唬6 -> id=1
+    fault_injection_test.go:210: [L4.3] 瓒呭ぇ鏉冮噸杩唬7 -> id=1
+    fault_injection_test.go:210: [L4.3] 瓒呭ぇ鏉冮噸杩唬8 -> id=1
+    fault_injection_test.go:210: [L4.3] 瓒呭ぇ鏉冮噸杩唬9 -> id=1
+--- PASS: TestFaultInjection_LB_LargeWeight (0.00s)
+=== RUN   TestFaultInjection_LB_HighConcurrency
+    fault_injection_test.go:262: [L5.1] 40骞跺彂goroutine鍚屾椂Select瀹屾垚锛屾棤panic
+--- PASS: TestFaultInjection_LB_HighConcurrency (0.00s)
+=== RUN   TestFaultInjection_LB_UnknownType
+    fault_injection_test.go:279: [L6.1] 鏈煡LB绫诲瀷(999) -> fallback鍒癛oundRobin, id=2
+    fault_injection_test.go:283: [L6.1] 鏈煡LB绫诲瀷(-1) -> fallback鍒癛oundRobin, id=2
+--- PASS: TestFaultInjection_LB_UnknownType (0.00s)
+=== RUN   TestFaultInjection_LB_HashIPConsistency
+    fault_injection_test.go:307: [L7.1] HashIP涓€鑷存€? 鍚屼竴IP 20娆elect, 濮嬬粓杩斿洖 5
+--- PASS: TestFaultInjection_LB_HashIPConsistency (0.00s)
+=== RUN   TestFaultInjection_LB_RoundRobinOrder
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬0 -> id=3
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬1 -> id=1
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬2 -> id=2
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬3 -> id=3
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬4 -> id=1
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬5 -> id=2
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬6 -> id=3
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬7 -> id=1
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬8 -> id=2
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬9 -> id=3
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬10 -> id=1
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬11 -> id=2
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬12 -> id=3
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬13 -> id=1
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬14 -> id=2
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬15 -> id=3
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬16 -> id=1
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬17 -> id=2
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬18 -> id=3
+    fault_injection_test.go:321: [L7.2] RR椤哄簭杩唬19 -> id=1
+--- PASS: TestFaultInjection_LB_RoundRobinOrder (0.00s)
+PASS
+ok  	github.com/fagongzi/gateway/pkg/lb	0.233s

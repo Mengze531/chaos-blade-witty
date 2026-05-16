@@ -1,0 +1,92 @@
+{
+  "version": "1.0.0",
+  "title": "Complex Fault Injection Experiment",
+  "description": "A complex experiment with multiple real-world fault injection scenarios",
+  "steady-state-hypothesis": {
+    "title": "System is operational",
+    "probes": []
+  },
+  "method": [
+    {
+      "type": "action",
+      "name": "system-information",
+      "provider": {
+        "type": "python",
+        "module": "platform",
+        "func": "platform"
+      }
+    },
+    {
+      "type": "action",
+      "name": "os-version",
+      "provider": {
+        "type": "python",
+        "module": "platform",
+        "func": "version"
+      }
+    },
+    {
+      "type": "action",
+      "name": "python-version",
+      "provider": {
+        "type": "python",
+        "module": "platform",
+        "func": "python_version"
+      }
+    },
+    {
+      "type": "action",
+      "name": "get-username",
+      "provider": {
+        "type": "python",
+        "module": "os",
+        "func": "getenv",
+        "arguments": {
+          "key": "USERNAME"
+        }
+      }
+    },
+    {
+      "type": "action",
+      "name": "get-computer-name",
+      "provider": {
+        "type": "python",
+        "module": "os",
+        "func": "getenv",
+        "arguments": {
+          "key": "COMPUTERNAME"
+        }
+      }
+    },
+    {
+      "type": "action",
+      "name": "get-current-directory",
+      "provider": {
+        "type": "python",
+        "module": "os",
+        "func": "getcwd"
+      }
+    },
+    {
+      "type": "action",
+      "name": "get-process-id",
+      "provider": {
+        "type": "python",
+        "module": "os",
+        "func": "getpid"
+      }
+    },
+    {
+      "type": "action",
+      "name": "get-parent-process-id",
+      "provider": {
+        "type": "python",
+        "module": "os",
+        "func": "getppid"
+      }
+    }
+
+
+  ],
+  "rollbacks": []
+}

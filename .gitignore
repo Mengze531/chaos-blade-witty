@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+*.egg
+*.dat
+*.log
+
+# Environment
+.venv/
+venv/
+env/
+.venv*/
+.conda/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Benchmark output (auto-generated)
+bench_output/*/
+bench_output/*.md
+!bench_output/.gitkeep
+
+# Sample logs (generated from template)
+sample_logs/*/
+sample_logs/*.txt
+sample_logs/*.log
+!sample_logs/README.md
+
+# Git
+.git/
+.gitattributes

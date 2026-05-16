@@ -1,0 +1,91 @@
+﻿=== RUN   TestFaultInjection_Route_EmptyInput
+    fault_injection_test.go:30: [F1.1] 绌篣RLPattern -> 閿欒: syntax error: must start with / (棰勬湡: syntax error)
+--- PASS: TestFaultInjection_Route_EmptyInput (0.00s)
+=== RUN   TestFaultInjection_Route_RootOnly
+--- PASS: TestFaultInjection_Route_RootOnly (0.00s)
+=== RUN   TestFaultInjection_Route_NoLeadingSlash
+    fault_injection_test.go:62: [F1.3] 鏃犲墠瀵? -> 閿欒: syntax error: must start with / (棰勬湡: syntax error: must start with /)
+--- PASS: TestFaultInjection_Route_NoLeadingSlash (0.00s)
+=== RUN   TestFaultInjection_Route_DoubleSlash
+    fault_injection_test.go:76: [F1.4] 璺緞涓棿// -> 閿欒: syntax error: // not allowed
+    fault_injection_test.go:83: [F1.4] '/api/v1//'瑙ｆ瀽鎴愬姛(鏈熬//琚慨鍓?
+--- PASS: TestFaultInjection_Route_DoubleSlash (0.00s)
+=== RUN   TestFaultInjection_Route_LParenNotAfterSlash
+    fault_injection_test.go:98: [F1.5] (涓嶅湪/涔嬪悗 -> 閿欒: syntax error: ( must after /
+--- PASS: TestFaultInjection_Route_LParenNotAfterSlash (0.00s)
+=== RUN   TestFaultInjection_Route_UnknownType
+    fault_injection_test.go:111: [F1.6] 鏈煡绫诲瀷 -> 閿欒: syntax error: unknown type: unknown_type
+--- PASS: TestFaultInjection_Route_UnknownType (0.00s)
+=== RUN   TestFaultInjection_Route_EnumNoColon
+    fault_injection_test.go:124: [F1.7] Enum缂哄皯: -> 閿欒: syntax error: unknown type: enum
+--- PASS: TestFaultInjection_Route_EnumNoColon (0.00s)
+=== RUN   TestFaultInjection_Route_UnmatchedParen
+    fault_injection_test.go:135: [F1.8] 宓屽鎷彿鐩存帴parser -> err=<nil>
+    fault_injection_test.go:147: [F1.8] '/)' -> 閿欒: syntax error: missing ( (棰勬湡: syntax error: missing ()
+--- PASS: TestFaultInjection_Route_UnmatchedParen (0.00s)
+=== RUN   TestFaultInjection_Route_EmptyEnum
+    fault_injection_test.go:158: [F1.9] 绌烘灇涓?-> 閿欒: syntax error: missing (
+--- PASS: TestFaultInjection_Route_EmptyEnum (0.00s)
+=== RUN   TestFaultInjection_Route_ConstWithNamedArg
+    fault_injection_test.go:173: [F1.10] const+鍛藉悕鍙傛暟 -> 閿欒: syntax error: unexpect : token
+--- PASS: TestFaultInjection_Route_ConstWithNamedArg (0.00s)
+=== RUN   TestFaultInjection_Route_SpecialChars
+    fault_injection_test.go:192: [F1.11] 鍚┖瀛楃璺緞鏌ユ壘缁撴灉: matched=true
+--- PASS: TestFaultInjection_Route_SpecialChars (0.00s)
+=== RUN   TestFaultInjection_Route_DuplicateAPI
+    fault_injection_test.go:224: [F2.1] 閲嶅API -> 鍐茬獊閿欒: conflict with api 1
+--- PASS: TestFaultInjection_Route_DuplicateAPI (0.00s)
+=== RUN   TestFaultInjection_Route_StarMethodAfterSpecific
+    fault_injection_test.go:246: [F2.2] 鏂规硶鍐茬獊(GET vs *) -> 閿欒: conflict with api 1
+--- PASS: TestFaultInjection_Route_StarMethodAfterSpecific (0.00s)
+=== RUN   TestFaultInjection_Route_SpecificMethodAfterStar
+    fault_injection_test.go:268: [F2.3] 鏂规硶鍐茬獊(* vs GET) -> 閿欒: conflict with api 1
+--- PASS: TestFaultInjection_Route_SpecificMethodAfterStar (0.00s)
+=== RUN   TestFaultInjection_Route_FindNonExistent
+2026/05/07 00:00:38.558971 [info] check next item
+    fault_injection_test.go:289: [F3.1] 鏌ユ壘涓嶅瓨鍦ㄨ矾寰?-> id=0, ok=false (棰勬湡: 0, false)
+--- PASS: TestFaultInjection_Route_FindNonExistent (0.04s)
+=== RUN   TestFaultInjection_Route_FindLongerPath
+2026/05/07 00:00:38.598527 [info] check next item
+    fault_injection_test.go:307: [F3.2] 闀胯矾寰勪笉鍖归厤 -> id=0, ok=false
+--- PASS: TestFaultInjection_Route_FindLongerPath (0.00s)
+=== RUN   TestFaultInjection_Route_MethodMismatch
+    fault_injection_test.go:325: [F3.3] 鏂规硶涓嶅尮閰?GET vs POST) -> id=0, ok=false
+--- PASS: TestFaultInjection_Route_MethodMismatch (0.00s)
+=== RUN   TestFaultInjection_Route_FindWithNilParams
+    fault_injection_test.go:343: [F3.4] nil paramsFunc -> 鍖归厤鎴愬姛 id=1
+--- PASS: TestFaultInjection_Route_FindWithNilParams (0.00s)
+=== RUN   TestFaultInjection_Route_VeryLongURL
+    fault_injection_test.go:372: [F4.1] 瓒呴暱璺緞(100娈? -> 娣诲姞鎴愬姛, 鏌ユ壘: id=1, ok=true
+--- PASS: TestFaultInjection_Route_VeryLongURL (0.00s)
+=== RUN   TestFaultInjection_Route_DeepNested
+    fault_injection_test.go:394: [F4.2] 娣卞害宓屽(50灞? -> 娣诲姞鎴愬姛, 鏌ユ壘: ok=true
+--- PASS: TestFaultInjection_Route_DeepNested (0.00s)
+=== RUN   TestFaultInjection_Route_WildcardPriority
+    fault_injection_test.go:422: [F5.1] 閫氶厤绗︿紭鍏堢骇 -> id=1, ok=true (/*鍜?users/1鍚屾椂娉ㄥ唽)
+--- PASS: TestFaultInjection_Route_WildcardPriority (0.00s)
+=== RUN   TestFaultInjection_Route_NumberTypeMismatch
+2026/05/07 00:00:38.599071 [info] check next item
+    fault_injection_test.go:439: [F5.2] number涓嶅尮閰嶅瓧姣?-> id=0, ok=false
+    fault_injection_test.go:444: [F5.2] number涓嶅尮閰嶇┖ -> id=0, ok=false
+--- PASS: TestFaultInjection_Route_NumberTypeMismatch (0.00s)
+=== RUN   TestFaultInjection_Route_EnumNotInList
+2026/05/07 00:00:38.599071 [info] check next item
+    fault_injection_test.go:461: [F5.3] 鏋氫妇鍊间笉鍖归厤 -> id=0, ok=false
+--- PASS: TestFaultInjection_Route_EnumNotInList (0.00s)
+=== RUN   TestFaultInjection_Route_SpecialURLEncoding
+2026/05/07 00:00:38.599071 [info] check next item
+    fault_injection_test.go:481: [F5.4] 鍚┖鏍兼煡璇㈣矾寰?-> id=0, ok=false
+2026/05/07 00:00:38.599071 [info] check next item
+    fault_injection_test.go:485: [F5.4] 鍚腑鏂囪矾寰?-> id=0, ok=false
+--- PASS: TestFaultInjection_Route_SpecialURLEncoding (0.00s)
+=== RUN   TestFaultInjection_Route_ConcurrentAddAndFind
+2026/05/07 00:00:38.599597 [info] check next item
+2026/05/07 00:00:38.599597 [info] check next item
+2026/05/07 00:00:38.599597 [info] check next item
+2026/05/07 00:00:38.599597 [info] check next item
+2026/05/07 00:00:38.599597 [info] check next item
+    fault_injection_test.go:530: [F6.1] 骞跺彂(10 goroutines)娣诲姞鍜屾煡鎵惧畬鎴愶紝鏃爌anic
+--- PASS: TestFaultInjection_Route_ConcurrentAddAndFind (0.00s)
+PASS
+ok  	github.com/fagongzi/gateway/pkg/route	0.193s

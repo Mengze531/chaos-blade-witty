@@ -1,0 +1,53 @@
+﻿=== RUN   TestFaultInjection_JWT_NonExistentFile
+    fault_injection_jwt_test.go:25: [J1.1] 涓嶅瓨鍦ㄧ殑閰嶇疆鏂囦欢 -> 閿欒: open /nonexistent_file_for_jwt_test.json: The system cannot find the file specified.
+--- PASS: TestFaultInjection_JWT_NonExistentFile (0.00s)
+=== RUN   TestFaultInjection_JWT_InvalidJSON
+    fault_injection_jwt_test.go:47: [J1.2] 鏃犳晥JSON閰嶇疆 -> 閿欒: unexpected end of JSON input
+--- PASS: TestFaultInjection_JWT_InvalidJSON (0.00s)
+=== RUN   TestFaultInjection_JWT_UnsupportedMethod
+    fault_injection_jwt_test.go:68: [J1.3] 涓嶆敮鎸佺殑绛惧悕鏂规硶(RS256) -> 閿欒: unsupported method: RS256
+--- PASS: TestFaultInjection_JWT_UnsupportedMethod (0.00s)
+=== RUN   TestFaultInjection_JWT_EmptySecret
+    fault_injection_jwt_test.go:89: [J1.4] 绌簊ecret -> 鍒涘缓鎴愬姛: &{BaseFilter:{} cfg:0xc0002b6380 secretBytes:[] getter:0x7ff767513360 csrfGetter:0x7ff767513160 redisPool:<nil> leaseTTLDuration:0 signing:0xc000008eb8 actions:[] actionArgs:[]}
+--- PASS: TestFaultInjection_JWT_EmptySecret (0.00s)
+=== RUN   TestFaultInjection_JWT_UnknownAction
+    fault_injection_jwt_test.go:115: [J1.5] 鏈煡action(method=nonexistent_action) -> 閿欒: not support action method: nonexistent_action
+--- PASS: TestFaultInjection_JWT_UnknownAction (0.00s)
+=== RUN   TestFaultInjection_JWT_InvalidTokenLookup
+    fault_injection_jwt_test.go:134: [J1.6] 鏁呴殰娉ㄥ叆: 鏃犳晥tokenLookup -> panic: runtime error: index out of range [1] with length 1
+--- PASS: TestFaultInjection_JWT_InvalidTokenLookup (0.00s)
+=== RUN   TestFaultInjection_JWT_TokenLookupOnlyColon
+    fault_injection_jwt_test.go:165: [J1.7] tokenLookup鍙湁: -> 鍒涘缓鎴愬姛: &{BaseFilter:{} cfg:0xc0002b6700 secretBytes:[109 121 115 101 99 114 101 116] getter:0x7ff767513360 csrfGetter:0x7ff767513160 redisPool:<nil> leaseTTLDuration:0 signing:0xc000008eb8 actions:[] actionArgs:[]}
+--- PASS: TestFaultInjection_JWT_TokenLookupOnlyColon (0.00s)
+=== RUN   TestFaultInjection_JWT_QueryEmptyName
+    fault_injection_jwt_test.go:184: [J1.8] query绌哄弬鏁板悕 -> 鍒涘缓鎴愬姛
+--- PASS: TestFaultInjection_JWT_QueryEmptyName (0.00s)
+=== RUN   TestFaultInjection_JWT_CookieEmptyName
+    fault_injection_jwt_test.go:203: [J1.9] cookie绌哄悕 -> 鍒涘缓鎴愬姛
+--- PASS: TestFaultInjection_JWT_CookieEmptyName (0.00s)
+=== RUN   TestFaultInjection_JWT_NegativeRedisTimeout
+    fault_injection_jwt_test.go:232: [J1.10] redis璐熸暟閰嶇疆 -> 鍒涘缓鎴愬姛(鍙兘杩愯鏃舵墠鎶ラ敊)
+--- PASS: TestFaultInjection_JWT_NegativeRedisTimeout (0.00s)
+=== RUN   TestFaultInjection_RateLimit_ZeroQPS
+    fault_injection_rate_limit_test.go:25: [R1.1] 鏁呴殰娉ㄥ叆: newRateLimiter(0) -> panic: runtime error: integer divide by zero
+--- PASS: TestFaultInjection_RateLimit_ZeroQPS (0.00s)
+=== RUN   TestFaultInjection_RateLimit_MinQPS
+    fault_injection_rate_limit_test.go:48: [R1.2] 鏁呴殰娉ㄥ叆: QPS=1 绗簩涓姹傝鎷掔粷(姝ｇ‘)
+--- PASS: TestFaultInjection_RateLimit_MinQPS (0.00s)
+=== RUN   TestFaultInjection_RateLimit_HugeQPS
+    fault_injection_rate_limit_test.go:58: [R1.3] 鏁呴殰娉ㄥ叆: 瓒呭ぇQPS瀵艰嚧panic: token bucket fill interval is not > 0
+--- PASS: TestFaultInjection_RateLimit_HugeQPS (0.00s)
+=== RUN   TestFaultInjection_RateLimit_NegativeQPS
+    fault_injection_rate_limit_test.go:72: [R1.4] 鏁呴殰娉ㄥ叆: 璐熸暟QPS瀵艰嚧panic: token bucket fill interval is not > 0
+--- PASS: TestFaultInjection_RateLimit_NegativeQPS (0.00s)
+=== RUN   TestFaultInjection_RateLimit_WaitMode
+    fault_injection_rate_limit_test.go:94: [R1.5] Wait妯″紡: QPS=100, 200璇锋眰鑰楁椂=1.0005111s
+--- PASS: TestFaultInjection_RateLimit_WaitMode (1.00s)
+=== RUN   TestFaultInjection_RateLimit_HugeCount
+    fault_injection_rate_limit_test.go:103: [R1.6] do(2^31) -> true
+--- PASS: TestFaultInjection_RateLimit_HugeCount (0.00s)
+=== RUN   TestFaultInjection_RateLimit_BucketEdge
+    fault_injection_rate_limit_test.go:121: [R2.1] 绾崇绾ill interval -> TakeAvailable(1)=1
+--- PASS: TestFaultInjection_RateLimit_BucketEdge (0.00s)
+PASS
+ok  	github.com/fagongzi/gateway/pkg/proxy	1.241s

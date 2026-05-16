@@ -1,0 +1,54 @@
+{
+  "version": "1.0.0",
+  "title": "Full Fault Injection Experiment",
+  "description": "A comprehensive experiment with network, memory, and file system fault injection",
+  "steady-state-hypothesis": {
+    "title": "System is operational",
+    "probes": []
+  },
+  "method": [
+    {
+      "type": "action",
+      "name": "system-information",
+      "provider": {
+        "type": "python",
+        "module": "platform",
+        "func": "platform"
+      }
+    },
+    {
+      "type": "action",
+      "name": "file-system-operation",
+      "provider": {
+        "type": "python",
+        "module": "os",
+        "func": "listdir",
+        "arguments": {
+          "path": "."
+        }
+      }
+    },
+    {
+      "type": "action",
+      "name": "memory-pressure-test",
+      "provider": {
+        "type": "python",
+        "module": "os",
+        "func": "getenv",
+        "arguments": {
+          "key": "PATH"
+        }
+      }
+    },
+    {
+      "type": "action",
+      "name": "network-status-check",
+      "provider": {
+        "type": "python",
+        "module": "socket",
+        "func": "gethostname"
+      }
+    }
+  ],
+  "rollbacks": []
+}

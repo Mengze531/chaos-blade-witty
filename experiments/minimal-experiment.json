@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "title": "Minimal Chaos Experiment",
+  "description": "A minimal chaos experiment example",
+  "steady-state-hypothesis": {
+    "title": "System is operational",
+    "probes": []
+  },
+  "method": [],
+  "rollbacks": []
+}

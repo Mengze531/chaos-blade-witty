@@ -1,0 +1,39 @@
+{
+    "title": "a dummy test",
+    "description": "N/A",
+    "tags": [],
+    "steady-state-hypothesis": {
+        "title": "a steady state hypo",
+        "probes": [
+            {
+                "type": "probe",
+                "name": "all_microservices_healthy",
+                "provider": {
+                    "type": "python",
+                    "module": "chaosk8s.probes",
+                    "func": "all_microservices_healthy",
+                    "arguments": {
+                        "ns": "default"
+                    }
+                },
+                "tolerance": "true"
+            }
+        ]
+    },
+    "method": [
+        {
+            "type": "action",
+            "name": "kill_microservice",
+            "provider": {
+                "type": "python",
+                "module": "chaosk8s.actions",
+                "func": "kill_microservice",
+                "arguments": {
+                    "name": "true",
+                    "ns": "default",
+                    "label_selector": "N"
+                }
+            }
+        }
+    ]
+}

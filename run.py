@@ -16,8 +16,8 @@ os.environ.setdefault("PYTHONIOENCODING", "utf-8")
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
-ROOT = "G:\\chaostoolkit"
-FRAMEWORK = os.path.join(ROOT, "chaos_witty_agent_skill.py")
+ROOT = os.path.dirname(os.path.abspath(__file__))
+FRAMEWORK = os.path.join(ROOT, "scripts", "chaos_witty_agent_skill.py")
 CONTAINER = "chaosblade-demo"
 
 SCENARIOS = {

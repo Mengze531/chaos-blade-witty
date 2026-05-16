@@ -21,7 +21,7 @@ sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="repla
 # Config
 # ====================================================================
 CONTAINER = "chaosblade-demo"
-WORK_DIR = r"G:\chaostoolkit\bench_output"
+WORK_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "bench_output")
 BLADE_BIN = "/opt/chaosblade-1.8.0/blade"
 SKILL_DIR = r"C:\Users\86188\.config\opencode\skills\offline-disk-fault-diagnosis\scripts"
 SUMMARY_PY = os.path.join(SKILL_DIR, "diagnose_summary.py")

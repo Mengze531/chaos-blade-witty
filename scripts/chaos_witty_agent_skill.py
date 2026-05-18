@@ -354,6 +354,13 @@ class ChaosWittyBench:
         with open(os.path.join(scene_dir, "baseline.txt"), "w") as f:
             f.write(baseline)
 
+        # Step 1.5: prepare target process for process scenarios
+        if scenario_key in ("process", "process_stop"):
+            self.log("  [Step 1.5] Start target process (sleep background)...")
+            subprocess.run(f'docker exec {CONTAINER} bash -c "nohup sleep 300 > /dev/null 2>&1 &"',
+                          shell=True, capture_output=True, timeout=5)
+            time.sleep(1)
+
         # Step 2
         self.log(f"  [Step 2] Inject fault...")
         self.log(f"    Command: {s['blade_cmd']}")

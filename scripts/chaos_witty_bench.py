@@ -151,6 +151,64 @@ SCENARIOS["mem"] = {
     "diag_keywords": {"infocollect": ["memory", "mem", "oom"], "messages": ["oom|kill|memory|error"]},
 }
 
+SCENARIOS["network_delay"] = {
+    "name": "网络延迟注入",
+    "description": "通过 tc netem 在 eth0 上注入 500ms 网络延迟",
+    "blade_cmd": "tc qdisc add dev eth0 root netem delay 500ms 50ms 25%; sleep 15; tc qdisc del dev eth0 root 2>/dev/null; echo NETEM_DONE",
+    "witty_skills": ["offline-network-hardware-fault-diagnosis", "network-diagnosis"],
+    "collect_cmds": {
+        "dmesg.log": "dmesg", "top.txt": "top -bn1", "loadavg.txt": "cat /proc/loadavg",
+        "ping_before.txt": "ping -c 3 -W 2 127.0.0.1",
+        "ping_after.txt": "ping -c 3 -W 5 127.0.0.1",
+        "tc_qdisc.txt": "tc qdisc show dev eth0 2>/dev/null || echo no_tc",
+        "ss_summary.txt": "ss -s", "ifconfig.txt": "ip addr 2>/dev/null || ifconfig",
+    },
+    "diag_keywords": {"infocollect": ["network", "delay", "latency"], "messages": ["network|delay|eth0|error|timeout"]},
+}
+
+SCENARIOS["network_loss"] = {
+    "name": "网络丢包注入",
+    "description": "通过 tc netem 在 eth0 上注入 30% 网络丢包",
+    "blade_cmd": "tc qdisc del dev eth0 root 2>/dev/null; tc qdisc add dev eth0 root netem loss 30%; sleep 15; tc qdisc del dev eth0 root 2>/dev/null; echo NETEM_DONE",
+    "witty_skills": ["offline-network-hardware-fault-diagnosis", "network-diagnosis"],
+    "collect_cmds": {
+        "dmesg.log": "dmesg", "top.txt": "top -bn1", "loadavg.txt": "cat /proc/loadavg",
+        "ping_before.txt": "ping -c 3 -W 2 127.0.0.1",
+        "ping_after.txt": "ping -c 5 -W 5 127.0.0.1",
+        "tc_qdisc.txt": "tc qdisc show dev eth0 2>/dev/null || echo no_tc",
+        "ss_summary.txt": "ss -s", "ifconfig.txt": "ip addr 2>/dev/null || ifconfig",
+    },
+    "diag_keywords": {"infocollect": ["network", "loss", "packet"], "messages": ["network|loss|drop|eth0|error"]},
+}
+
+SCENARIOS["process_stop"] = {
+    "name": "进程暂停注入",
+    "description": "通过 ChaosBlade 暂停目标进程（SIGSTOP）",
+    "blade_cmd": f"{BLADE_BIN} create process stop --process sleep",
+    "witty_skills": ["system-resource-diagnosis", "offline-CPU-fault-diagnosis"],
+    "collect_cmds": {
+        "dmesg.log": "dmesg", "top.txt": "top -bn1", "loadavg.txt": "cat /proc/loadavg",
+        "ps_before.txt": "ps aux | grep sleep | grep -v grep | head -10",
+        "ps_state.txt": "ps aux | grep -E 'sleep|chaos_os' | grep -v grep | head -10",
+    },
+    "diag_keywords": {"infocollect": ["process", "sleep", "stop"], "messages": ["stopped|signal|SIGSTOP|process"]},
+}
+
+SCENARIOS["stress_ng"] = {
+    "name": "stress-ng 全维度压力",
+    "description": "通过 stress-ng 注入 CPU+IO+内存混合压力",
+    "blade_cmd": "stress-ng --cpu 4 --io 2 --vm 1 --vm-bytes 512M --hdd 1 --timeout 15s 2>/dev/null; echo DONE",
+    "witty_skills": ["online-cpu-scheduling-diagnosis", "offline-memory-fault-diagnosis"],
+    "collect_cmds": {
+        "dmesg.log": "dmesg", "top.txt": "top -bn1", "loadavg.txt": "cat /proc/loadavg",
+        "cpu_stat.txt": "cat /proc/stat | head -n 17", "memory.txt": "free -h",
+        "top_processes.txt": "ps aux --sort=-%cpu | head -10",
+        "iostat.txt": "iostat -x 1 3 2>/dev/null || echo no_iostat",
+        "uptime.txt": "uptime", "mpstat.txt": "mpstat -P ALL 1 1 2>/dev/null || echo no",
+    },
+    "diag_keywords": {"infocollect": ["CPU", "load", "memory", "stress"], "messages": ["stress|oom|load|CPU|error"]},
+}
+
 # ==================== 评测场景执行器 ====================
 class ChaosWittyBench:
     def __init__(self, work_dir=WORK_DIR):

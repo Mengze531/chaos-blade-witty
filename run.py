@@ -21,11 +21,15 @@ FRAMEWORK = os.path.join(ROOT, "scripts", "chaos_witty_agent_skill.py")
 CONTAINER = "chaosblade-demo"
 
 SCENARIOS = {
-    "1":  ("cpu",      "CPU overload 70% (20s)"),
-    "2":  ("disk_io",  "Disk I/O write 50MB (15s)"),
-    "3":  ("process",  "Process kill SIGTERM"),
-    "4":  ("disk_fill","Disk fill 80% (15s)"),
-    "5":  ("mem",      "Memory load 60% (20s)"),
+    "1":  ("cpu",           "CPU overload 70% (20s)"),
+    "2":  ("disk_io",       "Disk I/O write 50MB (15s)"),
+    "3":  ("process",       "Process kill SIGTERM"),
+    "4":  ("disk_fill",     "Disk fill 80% (15s)"),
+    "5":  ("mem",           "Memory load 60% (20s)"),
+    "6":  ("network_delay", "Network delay 3000ms (20s)"),
+    "7":  ("network_loss",  "Network packet loss 50% (20s)"),
+    "8":  ("process_stop",  "Process stop (pause) SIGSTOP"),
+    "9":  ("stress_ng",     "stress-ng CPU+IO+memory mixed (15s)"),
 }
 
 def section(title):
@@ -85,12 +89,12 @@ def select_scenario(preset=""):
 
     for k, (s, d) in SCENARIOS.items():
         print(f"  [{k}] {d}")
-    print("  [A] Run all 5 scenarios")
+    print("  [A] Run all 9 scenarios")
     print("  [L] List scenarios/agents")
     print("  [Q] Quit")
 
     try:
-        choice = input("\nChoice (1-5, A=all, L=list, Q=quit): ").upper()
+        choice = input("\nChoice (1-9, A=all, L=list, Q=quit): ").upper()
     except EOFError:
         choice = "Q"
 

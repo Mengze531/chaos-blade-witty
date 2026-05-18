@@ -320,12 +320,12 @@ class ChaosWittyBench:
                                 if m: metrics[k.lower() + "_kb"] = m.group(1)
         return metrics
 
-    def run_agent_pipeline(self, scenario_key, scene_dir, log_dir):
+    def run_agent_pipeline(self, scenario_key, scene_dir, log_dir, inject_ok=False, inject_uid="", wait_sec=25):
         s = SCENARIOS[scenario_key]
         ctx = {
             "scenario": scenario_key, "scene_name": s["name"],
             "scene_dir": scene_dir, "log_dir": log_dir,
-            "inject_ok": False, "inject_uid": "", "wait_sec": 25,
+            "inject_ok": inject_ok, "inject_uid": inject_uid, "wait_sec": wait_sec,
             "bench_instance": self,
         }
         for agent_cls in [FuxiAgent, DayuAgent, KuafuAgent, BaizeAgent, NuwaAgent]:
@@ -355,15 +355,21 @@ class ChaosWittyBench:
             f.write(baseline)
 
         # Step 2
-        self.log(f"  [Step 2] ChaosBlade inject...")
+        self.log(f"  [Step 2] Inject fault...")
         self.log(f"    Command: {s['blade_cmd']}")
-        inject_out = subprocess.run(f"docker exec {CONTAINER} bash -c \"{s['blade_cmd']}\"",
-                                     shell=True, capture_output=True, text=True, timeout=15).stdout + \
-                     subprocess.run(f"docker exec {CONTAINER} bash -c \"{s['blade_cmd']}\"",
-                                     shell=True, capture_output=True, text=True, timeout=15).stderr
+        if "stress-ng" in s['blade_cmd']:
+            timeout_val = 30
+        elif "sleep" in s['blade_cmd']:
+            m = re.search(r'sleep\s+(\d+)', s['blade_cmd'])
+            timeout_val = int(m.group(1)) + 15 if m else 30
+        else:
+            timeout_val = 15
+        exec_res = subprocess.run(f"docker exec {CONTAINER} bash -c \"{s['blade_cmd']}\"",
+                                  shell=True, capture_output=True, text=True, timeout=timeout_val)
+        inject_out = exec_res.stdout + "\n" + exec_res.stderr
         with open(os.path.join(scene_dir, "inject_result.txt"), "w") as f:
-            f.write(inject_out)
-        self.log(f"    Result: {inject_out.strip()[:120]}")
+            f.write(inject_out.strip())
+        self.log(f"    Result: {inject_out.strip()[:200]}")
 
         inj_ok = False
         inj_uid = ""
@@ -371,6 +377,10 @@ class ChaosWittyBench:
         if m and '"code":200' in inject_out:
             inj_ok = True
             inj_uid = m.group(1)
+        # Non-ChaosBlade command (tc, stress-ng) with embedded sleep: treat as success
+        if "NETEM_DONE" in inject_out or ("stress-ng" in s['blade_cmd'] and "DONE" in inject_out):
+            inj_ok = True
+            inj_uid = scenario_key
 
         # Step 3
         self.log(f"  [Step 3] Collect diagnosis logs...")
@@ -382,9 +392,11 @@ class ChaosWittyBench:
             subprocess.run(f'docker exec {CONTAINER} bash -c "{cmd} > {cdir}/{filename} 2>/dev/null"',
                           shell=True, capture_output=True, timeout=10)
 
-        timeout = re.search(r'--timeout\s+(\d+)', s["blade_cmd"])
-        wait_sec = int(timeout.group(1)) + 5 if timeout else 20
-        self.log(f"    Waiting {wait_sec}s auto destroy...")
+        m = re.search(r'sleep\s+(\d+)', s["blade_cmd"])
+        wait_sec = int(m.group(1)) + 5 if m else 20
+        m2 = re.search(r'--timeout\s+(\d+)', s["blade_cmd"])
+        wait_sec = int(m2.group(1)) + 5 if m2 else wait_sec
+        self.log(f"    Waiting {wait_sec}s for injection to settle...")
         time.sleep(wait_sec)
 
         subprocess.run(f'docker cp {CONTAINER}:{cdir}/. "{os.path.join(log_dir, "infocollect_logs")}"',
@@ -396,12 +408,8 @@ class ChaosWittyBench:
 
         # Step 4
         self.log(f"  [Step 4] Agent pipeline...")
-        ctx = self.run_agent_pipeline(scenario_key, scene_dir, log_dir)
-        ctx["inject_ok"] = inj_ok
-        ctx["inject_uid"] = inj_uid
+        ctx = self.run_agent_pipeline(scenario_key, scene_dir, log_dir, inject_ok=inj_ok, inject_uid=inj_uid, wait_sec=wait_sec)
         ctx["scene_dir"] = scene_dir
-        ctx["bench_instance"] = self
-        # Update bench_instance in run_agent_pipeline result
         ctx["bench_instance"] = self
 
         rca_path = os.path.join(scene_dir, "baize_rca_report.md")
@@ -497,6 +505,62 @@ class ChaosWittyBench:
 # Scenarios Definition
 # ====================================================================
 SCENARIOS = {}
+
+SCENARIOS["network_delay"] = {
+    "name": "Network delay inject",
+    "description": "Inject 500ms network latency via tc netem on eth0 (15s)",
+    "blade_cmd": "tc qdisc add dev eth0 root netem delay 500ms 50ms 25%; sleep 15; tc qdisc del dev eth0 root 2>/dev/null; echo NETEM_DONE",
+    "collect_cmds": {
+        "dmesg.log": "dmesg", "top.txt": "top -bn1", "loadavg.txt": "cat /proc/loadavg",
+        "ping_before.txt": "ping -c 3 -W 2 127.0.0.1",
+        "ping_after.txt": "ping -c 3 -W 5 127.0.0.1",
+        "ss_summary.txt": "ss -s", "ifconfig.txt": "ip addr 2>/dev/null || ifconfig",
+        "tc_qdisc.txt": "tc qdisc show dev eth0 2>/dev/null || echo no_tc",
+        "netstat_summary.txt": "netstat -s 2>/dev/null | head -20 || echo no_netstat",
+    },
+    "diag_keywords": {"infocollect": ["network", "delay", "latency"], "messages": ["network|delay|eth0|error|timeout"]},
+}
+
+SCENARIOS["network_loss"] = {
+    "name": "Network packet loss inject",
+    "description": "Inject 30% packet loss via tc netem on eth0 (15s)",
+    "blade_cmd": "tc qdisc add dev eth0 root netem loss 30%; sleep 15; tc qdisc del dev eth0 root 2>/dev/null; echo NETEM_DONE",
+    "collect_cmds": {
+        "dmesg.log": "dmesg", "top.txt": "top -bn1", "loadavg.txt": "cat /proc/loadavg",
+        "ping_before.txt": "ping -c 3 -W 2 127.0.0.1",
+        "ping_after.txt": "ping -c 5 -W 5 127.0.0.1",
+        "ss_summary.txt": "ss -s", "ifconfig.txt": "ip addr 2>/dev/null || ifconfig",
+        "tc_qdisc.txt": "tc qdisc show dev eth0 2>/dev/null || echo no_tc",
+        "netstat_summary.txt": "netstat -s 2>/dev/null | head -20 || echo no_netstat",
+    },
+    "diag_keywords": {"infocollect": ["network", "loss", "packet"], "messages": ["network|loss|drop|eth0|error"]},
+}
+
+SCENARIOS["process_stop"] = {
+    "name": "Process stop (pause) inject",
+    "description": "Pause target process via ChaosBlade (SIGSTOP), then resume",
+    "blade_cmd": f"{BLADE_BIN} create process stop --process sleep",
+    "collect_cmds": {
+        "dmesg.log": "dmesg", "top.txt": "top -bn1", "loadavg.txt": "cat /proc/loadavg",
+        "ps_before.txt": "ps aux | grep sleep | grep -v grep | head -10",
+        "ps_state.txt": "ps aux | grep -E 'sleep|chaos_os' | grep -v grep | head -10",
+    },
+    "diag_keywords": {"infocollect": ["process", "sleep", "stop"], "messages": ["stopped|signal|SIGSTOP|process"]},
+}
+
+SCENARIOS["stress_ng"] = {
+    "name": "stress-ng all-in-one stress",
+    "description": "Inject mixed CPU+IO+memory stress via stress-ng (not ChaosBlade)",
+    "blade_cmd": "stress-ng --cpu 4 --io 2 --vm 1 --vm-bytes 512M --hdd 1 --timeout 15s 2>/dev/null; echo DONE",
+    "collect_cmds": {
+        "dmesg.log": "dmesg", "top.txt": "top -bn1", "loadavg.txt": "cat /proc/loadavg",
+        "cpu_stat.txt": "cat /proc/stat | head -n 17", "memory.txt": "free -h",
+        "top_processes.txt": "ps aux --sort=-%cpu | head -10",
+        "iostat.txt": "iostat -x 1 3 2>/dev/null || echo no_iostat",
+        "uptime.txt": "uptime", "mpstat.txt": "mpstat -P ALL 1 1 2>/dev/null || echo no",
+    },
+    "diag_keywords": {"infocollect": ["CPU", "load", "memory", "stress"], "messages": ["stress|oom|load|CPU|error"]},
+}
 
 SCENARIOS["cpu"] = {
     "name": "CPU overload inject",
